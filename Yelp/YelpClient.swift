@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import CoreLocation
 import AFNetworking
 import BDBOAuth1Manager
 
@@ -57,9 +57,15 @@ class YelpClient: BDBOAuth1RequestOperationManager {
     
     func searchWithTerm(term: String, sort: YelpSortMode?, categories: [String]?, deals: Bool?, completion: ([Business]!, NSError!) -> Void) -> AFHTTPRequestOperation {
         // For additional parameters, see http://www.yelp.com/developers/documentation/v2/search_api
-
-        // Default the location to San Francisco
-        var parameters: [String : AnyObject] = ["term": term, "ll": "37.785771,-122.406165"]
+        var ll: String
+        
+        if String(BusinessesViewController().locationManager.location?.coordinate.latitude) != "nil" {
+            ll = "\(BusinessesViewController().locationManager.location!.coordinate.latitude),\(BusinessesViewController().locationManager.location!.coordinate.longitude)"
+        } else {
+            ll = "38.645070,-90.315063"
+        }
+        
+        var parameters: [String : AnyObject] = ["term": term, "ll": ll]
 
         if sort != nil {
             parameters["sort"] = sort!.rawValue
